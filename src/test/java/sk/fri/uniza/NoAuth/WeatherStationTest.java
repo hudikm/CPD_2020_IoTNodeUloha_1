@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.List;
 import java.util.List;
 import java.util.Map;
@@ -152,11 +153,12 @@ public class WeatherStationTest {
     @DisplayName("Test načítania historie meteo dát")
     public void testHisotryDataObject() {
         IotNode iotNode = new IotNode();
+        int year = Calendar.getInstance().get(Calendar.YEAR);
         Call<List<WeatherData>> currentWeather =
                 iotNode.getWeatherStationService()
-                        .getHistoryWeather("station_1", "01/01/2020 00:00",
+                        .getHistoryWeather("station_1", "01/01/"+String.valueOf(year)+" 00:00",
                                 "02" +
-                                        "/01/2020 00:00");
+                                        "/01/"+String.valueOf(year)+" 00:00");
         try {
             Response<List<WeatherData>> response = currentWeather.execute();
             assertTrue(response.isSuccessful(),
@@ -164,8 +166,8 @@ public class WeatherStationTest {
                             (response.errorBody() != null ?
                                     response.errorBody().string() : ""));
             List<WeatherData> body = response.body();
-            LocalDateTime dateTime = LocalDateTime.of(2020, 01, 01, 0, 0);
-            LocalDateTime stopDate = LocalDateTime.of(2020, 01, 02, 0, 0);
+            LocalDateTime dateTime = LocalDateTime.of(year, 01, 01, 0, 0);
+            LocalDateTime stopDate = LocalDateTime.of(year, 01, 02, 0, 0);
 
             for (WeatherData weatherData : body) {
                 LocalTime localTime =
